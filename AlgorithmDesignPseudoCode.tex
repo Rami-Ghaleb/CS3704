@@ -1,0 +1,632 @@
+\documentclass{article}
+\usepackage[ruled,vlined]{algorithm2e}
+
+\begin{document}
+
+% 1. Authenticate Student Using PID
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{PID (username), Password}
+\KwOut{Authentication status (Success/Failure)}
+
+Display "Enter PID:"\;
+Read PID\;
+Display "Enter Password:"\;
+Read Password\;
+
+\If{PID or Password is empty}{
+    Display "Error: PID and Password cannot be empty."\;
+    \Return "Failure"\;
+}
+
+\If{CheckCredentials(PID, Password)}{
+    Display "Initiating 2-Factor Authentication..."\;
+    \If{DuoPushAuthentication()}{
+        Display "Login Successful."\;
+        RedirectToDashboard()\;
+        \Return "Success"\;
+    }
+    \Else{
+        Display "Error: Duo Push Failed."\;
+        \Return "Failure"\;
+    }
+}
+\Else{
+    Display "Error: Invalid Credentials."\;
+    \Return "Failure"\;
+}
+\caption{Authenticate Student Using PID}
+\end{algorithm}
+
+% 2. Check Course Requirements
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID}
+\KwOut{List of Completed, Incomplete, and Suggested Courses}
+
+Validate StudentID\;
+\If{StudentID is invalid}{
+    Display "Error: Invalid Student ID."\;
+    \Return "Failure"\;
+}
+
+CompletedCourses $\gets$ FetchCompletedCourses(StudentID)\;
+DegreeRequirements $\gets$ FetchDegreeRequirements(StudentID)\;
+IncompleteCourses $\gets$ DegreeRequirements - CompletedCourses\;
+
+Display "Courses Completed:" CompletedCourses\;
+Display "Courses Outstanding:" IncompleteCourses\;
+
+\ForEach{Course in IncompleteCourses}{
+    \If{PrerequisitesMet(Course)}{
+        Add Course to SuggestedCourses\;
+    }
+}
+Display "Suggested Courses for Next Semester:" SuggestedCourses\;
+
+\caption{Check Course Requirements}
+\end{algorithm}
+
+% 3. View Financial Aid Balance and Status
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID}
+\KwOut{Financial Aid Status and Balance}
+
+Validate StudentID\;
+\If{StudentID is invalid}{
+    Display "Error: Invalid Student ID."\;
+    \Return "Failure"\;
+}
+
+FinancialAidData $\gets$ FetchFinancialAidData(StudentID)\;
+
+\If{FinancialAidData is empty}{
+    Display "No financial aid data available."\;
+    \Return\;
+}
+
+Display "Total Awarded:" FinancialAidData.TotalAwarded\;
+Display "Amount Used:" FinancialAidData.UsedAmount\;
+Display "Remaining Balance:" FinancialAidData.RemainingBalance\;
+
+\caption{View Financial Aid Balance and Status}
+\end{algorithm}
+
+% 4. Track Real-Time Waitlist Position
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID, CourseID}
+\KwOut{Real-Time Waitlist Position}
+
+Validate StudentID and CourseID\;
+\If{Invalid}{
+    Display "Error: Invalid Inputs."\;
+    \Return "Failure"\;
+}
+
+WaitlistData $\gets$ FetchWaitlistPosition(StudentID, CourseID)\;
+
+\If{WaitlistData is empty}{
+    Display "No waitlist information available."\;
+    \Return\;
+}
+
+Display "Course:" CourseID\;
+Display "Your Waitlist Position:" WaitlistData.Position\;
+Display "Estimated Wait Time:" WaitlistData.EstimatedTime\;
+
+\caption{Track Real-Time Waitlist Position}
+\end{algorithm}
+
+% 5. Predict Final Grades Using AI
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID, CourseID}
+\KwOut{Predicted Final Grade}
+
+Validate StudentID and CourseID\;
+\If{Invalid}{
+    Display "Error: Invalid Inputs."\;
+    \Return "Failure"\;
+}
+
+PerformanceData $\gets$ FetchStudentPerformanceData(StudentID, CourseID)\;
+\If{PerformanceData is empty}{
+    Display "Insufficient data to predict grade."\;
+    \Return\;
+}
+
+PredictedGrade $\gets$ AIModel.Predict(PerformanceData)\;
+Display "Predicted Final Grade:" PredictedGrade\;
+
+\caption{Predict Final Grades Using AI}
+\end{algorithm}
+
+% 6. Retrieve Exam Schedule
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID}
+\KwOut{Personalized Exam Schedule}
+
+Validate StudentID\;
+\If{Invalid}{
+    Display "Error: Invalid Student ID."\;
+    \Return "Failure"\;
+}
+
+ExamSchedule $\gets$ FetchExamSchedule(StudentID)\;
+
+\If{ExamSchedule is empty}{
+    Display "No exam schedule available."\;
+    \Return\;
+}
+
+\ForEach{Exam in ExamSchedule}{
+    Display Exam.CourseName, Exam.Date, Exam.Time, Exam.Location\;
+}
+
+\caption{Retrieve Exam Schedule}
+\end{algorithm}
+
+% 7. Notify Drop/Withdraw Deadlines
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID}
+\KwOut{Notification of Upcoming Deadlines}
+
+Validate StudentID\;
+\If{Invalid}{
+    Display "Error: Invalid Student ID."\;
+    \Return "Failure"\;
+}
+
+CurrentSchedule $\gets$ FetchCurrentSchedule(StudentID)\;
+Deadlines $\gets$ FetchDropWithdrawDeadlines(CurrentSchedule)\;
+
+\ForEach{Deadline in Deadlines}{
+    SendNotification(StudentID, Deadline.CourseName, Deadline.Date)\;
+}
+
+\caption{Notify Drop/Withdraw Deadlines}
+\end{algorithm}
+
+% 8. Schedule Appointment with Advisor
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID, AdvisorID}
+\KwOut{Appointment Confirmation}
+
+Validate StudentID and AdvisorID\;
+\If{Invalid}{
+    Display "Error: Invalid Inputs."\;
+    \Return "Failure"\;
+}
+
+AvailableSlots $\gets$ FetchAdvisorAvailability(AdvisorID)\;
+
+Display "Available Appointment Slots:" AvailableSlots\;
+Display "Select a Slot:"\;
+Read SelectedSlot\;
+
+\If{BookAppointment(StudentID, AdvisorID, SelectedSlot)}{
+    Display "Appointment Confirmed for:" SelectedSlot\;
+}
+\Else{
+    Display "Error: Unable to book appointment."\;
+}
+
+\caption{Schedule Appointment with Advisor}
+\end{algorithm}
+
+% 9. Get Directions to Classroom Locations
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID, ClassroomID}
+\KwOut{Directions to Classroom Location}
+
+Validate StudentID and ClassroomID\;
+\If{Invalid}{
+    Display "Error: Invalid Inputs."\;
+    \Return "Failure"\;
+}
+
+ClassroomLocation $\gets$ FetchClassroomLocation(ClassroomID)\;
+
+\If{ClassroomLocation is empty}{
+    Display "No location data available."\;
+    \Return\;
+}
+
+Directions $\gets$ GenerateDirections(ClassroomLocation)\;
+Display "Directions to Classroom:" Directions\;
+
+\caption{Get Directions to Classroom Locations}
+\end{algorithm}
+
+% 10. Match Scholarships to Student Profile
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID, ProfileData}
+\KwOut{List of Matching Scholarships}
+
+Validate StudentID and ProfileData\;
+\If{Invalid}{
+    Display "Error: Invalid Inputs."\;
+    \Return "Failure"\;
+}
+
+ScholarshipList $\gets$ FetchAvailableScholarships()\;
+MatchingScholarships $\gets$ []\;
+
+\ForEach{Scholarship in ScholarshipList}{
+    \If{ProfileMatches(Scholarship, ProfileData)}{
+        Add Scholarship to MatchingScholarships\;
+    }
+}
+
+Display "Matching Scholarships:" MatchingScholarships\;
+
+\caption{Match Scholarships to Student Profile}
+\end{algorithm}
+
+% 11. Sync Calendar with Academic Events
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID, CalendarApp}
+\KwOut{Synchronized Calendar with Academic Events}
+
+Validate StudentID and CalendarApp\;
+\If{Invalid}{
+    Display "Error: Invalid Inputs."\;
+    \Return "Failure"\;
+}
+
+AcademicEvents $\gets$ FetchAcademicEvents(StudentID)\;
+\If{AcademicEvents is empty}{
+    Display "No academic events found."\;
+    \Return\;
+}
+
+\If{SyncCalendar(AcademicEvents, CalendarApp)}{
+    Display "Calendar synchronized successfully."\;
+}
+\Else{
+    Display "Error: Calendar synchronization failed."\;
+}
+
+\caption{Sync Calendar with Academic Events}
+\end{algorithm}
+
+% 12. Retrieve Personalized Class Schedule
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID}
+\KwOut{Class Schedule for Current Semester}
+
+Validate StudentID\;
+\If{Invalid}{
+    Display "Error: Invalid Student ID."\;
+    \Return "Failure"\;
+}
+
+ClassSchedule $\gets$ FetchClassSchedule(StudentID)\;
+
+\If{ClassSchedule is empty}{
+    Display "No class schedule available."\;
+    \Return\;
+}
+
+Display "Class Schedule:" ClassSchedule\;
+
+\caption{Retrieve Personalized Class Schedule}
+\end{algorithm}
+
+% 13. Estimate Course Difficulty with AI
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID, CourseID}
+\KwOut{Estimated Course Difficulty}
+
+Validate StudentID and CourseID\;
+\If{Invalid}{
+    Display "Error: Invalid Inputs."\;
+    \Return "Failure"\;
+}
+
+HistoricalData $\gets$ FetchHistoricalData(CourseID)\;
+\If{HistoricalData is empty}{
+    Display "No data available for this course."\;
+    \Return\;
+}
+
+EstimatedDifficulty $\gets$ AIModel.PredictDifficulty(HistoricalData)\;
+Display "Estimated Difficulty Level:" EstimatedDifficulty\;
+
+\caption{Estimate Course Difficulty with AI}
+\end{algorithm}
+
+% 14. Receive Class Registration Reminders
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID}
+\KwOut{Registration Reminder Notifications}
+
+Validate StudentID\;
+\If{Invalid}{
+    Display "Error: Invalid Student ID."\;
+    \Return "Failure"\;
+}
+
+RegistrationWindow $\gets$ FetchRegistrationWindow(StudentID)\;
+
+\If{CurrentDate near RegistrationWindow.StartDate}{
+    SendNotification(StudentID, "Registration begins soon. Prepare your course plan.")\;
+}
+
+\caption{Receive Class Registration Reminders}
+\end{algorithm}
+
+% 15. Track Upcoming Assignments
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID}
+\KwOut{List of Upcoming Assignments with Deadlines}
+
+Validate StudentID\;
+\If{Invalid}{
+    Display "Error: Invalid Student ID."\;
+    \Return "Failure"\;
+}
+
+AssignmentList $\gets$ FetchUpcomingAssignments(StudentID)\;
+
+\If{AssignmentList is empty}{
+    Display "No upcoming assignments."\;
+    \Return\;
+}
+
+Display "Upcoming Assignments:"\;
+\ForEach{Assignment in AssignmentList}{
+    Display Assignment.Name, Assignment.DueDate\;
+}
+
+\caption{Track Upcoming Assignments}
+\end{algorithm}
+
+% 16. Retrieve Exam Schedule
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID}
+\KwOut{Personalized Exam Schedule}
+
+Validate StudentID\;
+\If{Invalid}{
+    Display "Error: Invalid Student ID."\;
+    \Return "Failure"\;
+}
+
+ExamSchedule $\gets$ FetchExamSchedule(StudentID)\;
+
+\If{ExamSchedule is empty}{
+    Display "No exam schedule available."\;
+    \Return\;
+}
+
+Display "Exam Schedule:" ExamSchedule\;
+
+\caption{Retrieve Exam Schedule}
+\end{algorithm}
+
+% 17. Read Professor Reviews and Ratings
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID, ProfessorName or CourseID}
+\KwOut{Aggregated Professor Reviews and Ratings}
+
+Validate StudentID and Input Parameters\;
+\If{Invalid}{
+    Display "Error: Invalid Inputs."\;
+    \Return "Failure"\;
+}
+
+Reviews $\gets$ FetchProfessorReviews(ProfessorName or CourseID)\;
+
+\If{Reviews is empty}{
+    Display "No reviews available for the selected professor."\;
+    \Return\;
+}
+
+Display "Aggregated Ratings and Reviews:"\;
+\ForEach{Review in Reviews}{
+    Display Review.Rating, Review.Comments\;
+}
+
+\caption{Read Professor Reviews and Ratings}
+\end{algorithm}
+
+% 18. Track Real-Time Waitlist Position
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID, CourseID}
+\KwOut{Real-Time Waitlist Position}
+
+Validate StudentID and CourseID\;
+\If{Invalid}{
+    Display "Error: Invalid Inputs."\;
+    \Return "Failure"\;
+}
+
+WaitlistData $\gets$ FetchWaitlistData(StudentID, CourseID)\;
+
+\If{WaitlistData is empty}{
+    Display "No waitlist data available."\;
+    \Return\;
+}
+
+Display "Course:" CourseID\;
+Display "Waitlist Position:" WaitlistData.Position\;
+Display "Estimated Wait Time:" WaitlistData.EstimatedTime\;
+
+\caption{Track Real-Time Waitlist Position}
+\end{algorithm}
+
+% 19. Suggest Study Groups Based on Courses
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID, CourseID}
+\KwOut{List of Suggested Study Groups}
+
+Validate StudentID and CourseID\;
+\If{Invalid}{
+    Display "Error: Invalid Inputs."\;
+    \Return "Failure"\;
+}
+
+StudyGroups $\gets$ FetchStudyGroups(CourseID)\;
+
+\If{StudyGroups is empty}{
+    Display "No study groups found for this course."\;
+    \Return\;
+}
+
+Display "Suggested Study Groups:"\;
+\ForEach{Group in StudyGroups}{
+    Display Group.Name, Group.ContactDetails, Group.MeetingTimes\;
+}
+
+\caption{Suggest Study Groups Based on Courses}
+\end{algorithm}
+
+% 20. Schedule Appointment with Advisor
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID, AdvisorID}
+\KwOut{Appointment Confirmation}
+
+Validate StudentID and AdvisorID\;
+\If{Invalid}{
+    Display "Error: Invalid Inputs."\;
+    \Return "Failure"\;
+}
+
+AvailableSlots $\gets$ FetchAdvisorAvailability(AdvisorID)\;
+
+Display "Available Appointment Slots:" AvailableSlots\;
+Read SelectedSlot\;
+
+\If{BookAppointment(StudentID, AdvisorID, SelectedSlot)}{
+    Display "Appointment Confirmed for Slot:" SelectedSlot\;
+}
+\Else{
+    Display "Error: Unable to book appointment."\;
+}
+
+\caption{Schedule Appointment with Advisor}
+\end{algorithm}
+
+% 21. Get Directions to Classroom Locations
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID, ClassroomID}
+\KwOut{Directions to Classroom Location}
+
+Validate StudentID and ClassroomID\;
+\If{Invalid}{
+    Display "Error: Invalid Inputs."\;
+    \Return "Failure"\;
+}
+
+ClassroomLocation $\gets$ FetchClassroomLocation(ClassroomID)\;
+
+\If{ClassroomLocation is empty}{
+    Display "No location data available."\;
+    \Return\;
+}
+
+Directions $\gets$ GenerateDirections(ClassroomLocation)\;
+Display "Directions to Classroom:" Directions\;
+
+\caption{Get Directions to Classroom Locations}
+\end{algorithm}
+
+% 22. Track Scholarship Application Status
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID}
+\KwOut{List of Scholarships and Application Statuses}
+
+Validate StudentID\;
+\If{Invalid}{
+    Display "Error: Invalid Student ID."\;
+    \Return "Failure"\;
+}
+
+ScholarshipApplications $\gets$ FetchScholarshipApplications(StudentID)\;
+
+\If{ScholarshipApplications is empty}{
+    Display "No scholarship applications found."\;
+    \Return\;
+}
+
+Display "Scholarship Applications:"\;
+\ForEach{Application in ScholarshipApplications}{
+    Display Application.ScholarshipName, Application.Status\;
+}
+
+\caption{Track Scholarship Application Status}
+\end{algorithm}
+
+% 23. Predict Final Grades Using AI
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID, CourseID}
+\KwOut{Predicted Final Grade}
+
+Validate StudentID and CourseID\;
+\If{Invalid}{
+    Display "Error: Invalid Inputs."\;
+    \Return "Failure"\;
+}
+
+PerformanceData $\gets$ FetchStudentPerformanceData(StudentID, CourseID)\;
+
+\If{PerformanceData is empty}{
+    Display "Insufficient data to predict grade."\;
+    \Return\;
+}
+
+PredictedGrade $\gets$ AIModel.PredictGrade(PerformanceData)\;
+Display "Predicted Final Grade:" PredictedGrade\;
+
+\caption{Predict Final Grades Using AI}
+\end{algorithm}
+
+% 24. Receive AI-Powered Career Guidance
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{StudentID, ProfileData}
+\KwOut{Suggested Career Paths, Job Opportunities, or Internships}
+
+Validate StudentID and ProfileData\;
+\If{Invalid}{
+    Display "Error: Invalid Inputs."\;
+    \Return "Failure"\;
+}
+
+CareerSuggestions $\gets$ FetchCareerSuggestions(ProfileData)\;
+
+\If{CareerSuggestions is empty}{
+    Display "No career suggestions available."\;
+    \Return\;
+}
+
+Display "Career Suggestions:"\;
+\ForEach{Suggestion in CareerSuggestions}{
+    Display Suggestion.Title, Suggestion.Description, Suggestion.Link\;
+}
+
+\caption{Receive AI-Powered Career Guidance}
+\end{algorithm}
+
+\end{document}
